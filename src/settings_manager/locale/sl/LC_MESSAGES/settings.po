@@ -1,0 +1,55 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: settings 0.1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Junie\n"
+
+msgid "load_error"
+msgstr "Napaka pri nalaganju datoteke {path}: {error}"
+
+msgid "validation_failed"
+msgstr "Preverjanje konfiguracije ni uspelo."
+
+msgid "validation_errors"
+msgstr "Napake pri preverjanju konfiguracije:"
+
+msgid "save_error"
+msgstr "Napaka pri shranjevanju v datoteku {path}: {error}"
+
+msgid "dir_created"
+msgstr "Imenik z nastavitvami je bil ustvarjen: {path}"
+
+msgid "cli_key_not_found"
+msgstr "Key '{key}' not found or is null."
+
+msgid "cli_set_success"
+msgstr "Successfully set '{key}' to {value}"
+
+msgid "cli_remove_success"
+msgstr "Successfully removed '{key}'"
+
+msgid "cli_config_valid"
+msgstr "Configuration is valid."
+
+msgid "cli_config_invalid"
+msgstr "Configuration is invalid: {error}"
+
+msgid "cli_save_error"
+msgstr "Error saving settings: {error}"
+
+msgid "cli_remove_error"
+msgstr "Error removing key: {error}"
+
+msgid "cli_help_get"
+msgstr "Get a setting value"
+
+msgid "cli_help_set"
+msgstr "Set a setting value"
+
+msgid "cli_help_remove"
+msgstr "Remove a setting key"
+
+msgid "cli_help_validate"
+msgstr "Validate settings"
+
