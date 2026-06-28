@@ -14,6 +14,7 @@ Whether you're building a small script or a large-scale application, Settings Ma
 - **🌍 Localization**: Full support for all 24 official EU languages for error messages and CLI help.
 - **🧩 Singleton Pattern**: Guaranteed global access to your settings from anywhere in your application.
 - **📝 Markdown Integration**: Documentation and configuration living together in harmony using Markdown files with frontmatter.
+- **🧜‍♂️ Mermaid Integration**: Parse Mermaid state diagrams into executable Python objects with states as callable functions and managed transitions.
 
 ## 🛠️ Installation
 
@@ -145,6 +146,58 @@ To launch the TUI, use the `--tui` flag with the `set` command:
 ```bash
 settings-manager set --tui
 ```
+
+## 🧜‍♂️ Mermaid Support
+
+Settings Manager can parse Mermaid state diagrams from Markdown files and integrate them into your application as executable objects.
+
+### Usage in Markdown
+
+Just add a mermaid block with `stateDiagram` in your `.md` configuration file:
+
+```mermaid
+stateDiagram-v2
+    [*] --> Initializing
+    Initializing --> Ready : "Done"
+    Ready --> [*]
+```
+
+### Accessing in Python
+
+The parsed diagram will be available in your settings under the `mermaid` key.
+
+```python
+from settings_manager import Settings
+
+# Define schema with mermaid_diagram type
+SCHEMA = {
+    'mermaid': {
+        'type': 'dict',
+        'schema': {
+            'diagram': {'type': 'mermaid_diagram'}
+        }
+    }
+}
+
+settings = Settings(schema=SCHEMA)
+diagram = settings['mermaid']['diagram']
+
+# Access states as callables
+diagram.states['Initializing']()
+
+# Access transitions
+done_transition = diagram.transitions['done']
+print(f"Moving from {done_transition.source} to {done_transition.target}")
+```
+
+### Supported Features
+- Standard states and transitions.
+- Start/End markers (`[*]`).
+- Transition labels (converted to `snake_case` keys).
+- Comments and notes are ignored.
+
+### Constraints
+- Composite states, choice nodes, and forks/joins are currently not supported and will log a warning during loading.
 
 ## 🌍 Localization
 

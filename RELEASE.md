@@ -1,31 +1,39 @@
-# 🚀 Release Notes - v0.1.0
+# 🚀 Release Notes - v0.2.0
 
-We are proud to announce the first official release of **Settings Manager**! This version marks the transition from a conceptual tool to a robust, production-ready library for Python developers who need a better way to manage application configurations.
+We are excited to announce **Settings Manager v0.2.0**! This release introduces powerful Mermaid integration, allowing you to define state machines directly in your Markdown configuration files and use them as executable objects in Python.
 
 ## ✨ Highlights
 
-- **Multi-format Support**: Seamlessly work with YAML, TOML, and Markdown. No more locked-in configuration formats.
-- **Intelligent Deep Merging**: Manage complex configurations by splitting them into multiple files with clear priority rules.
-- **Schema-first Validation**: Never worry about malformed configuration again. Integrated Cerberus validation keeps your app stable.
-- **Modern TUI Editor**: A built-in, interactive terminal interface for managing settings visually. Perfect for CLI-heavy environments.
-- **Developer Centric**: Designed with a Singleton pattern for easy global access and a flexible CLI integration API.
-- **Globally Ready**: Built-in support for 24 languages, making your CLI tools accessible to a wider audience.
+- **🧜‍♂️ Mermaid Integration**: Effortlessly parse Mermaid state diagrams.
+- **🏃‍♂️ Executable States & Transitions**: States are automatically converted to callable functions, and transitions are managed objects.
+- **🛡️ Cerberus Support**: New `mermaid_diagram` type for robust validation of your diagrams.
+- **🔌 Zero Dependencies for Mermaid**: We've implemented a custom parser, removing the need for `pyStateGram` and keeping the library lightweight.
+- **📚 Improved OSS Compliance**: Better documentation and refined project structure.
 
 ## 📦 Installation
 
-Get started by installing the package via pip:
+Update your installation:
 
 ```bash
-pip install settings-manager
+pip install --upgrade settings-manager
 ```
 
-## 📚 Documentation
+## 🧜‍♂️ Quick Mermaid Example
 
-For a comprehensive guide, including quick start examples, CLI usage, and TUI features, please refer to our [README.md](README.md).
+Add to your `.md` file:
 
-## 🙏 Acknowledgements
+```mermaid
+stateDiagram-v2
+    [*] --> Active
+    Active --> [*] : "Stop"
+```
 
-Special thanks to the open-source community and the developers of PyYAML, Cerberus, and Textual, which form the core of this library.
+Access in Python:
+
+```python
+diagram = settings['mermaid']['diagram']
+diagram.states['Active']()
+```
 
 ---
 *Happy Configuring!*
