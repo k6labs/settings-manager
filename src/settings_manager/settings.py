@@ -1,5 +1,6 @@
 import gettext
 import logging
+import re
 import threading
 import tomllib
 from pathlib import Path
@@ -10,6 +11,8 @@ import tomli_w
 import yaml
 from cerberus import Validator
 
+from .mermaid import MermaidDiagram, MermaidParser
+
 logger = logging.getLogger(__name__)
 
 
@@ -17,6 +20,13 @@ class SettingsValidationError(Exception):
     """Custom exception raised for configuration validation failures."""
 
     pass
+
+
+class SettingsValidator(Validator):
+    """Custom Cerberus validator with support for MermaidDiagram type."""
+
+    def _validate_type_mermaid_diagram(self, value: Any) -> bool:
+        return isinstance(value, MermaidDiagram)
 
 
 class Settings:
@@ -208,7 +218,7 @@ class Settings:
         Raises:
             SettingsValidationError: If validation fails.
         """
-        v = Validator(self._schema)
+        v = SettingsValidator(self._schema)
         if not v.validate(self._data):
             logger.error(self._t("validation_errors"))
             logger.error(yaml.dump(v.errors, default_flow_style=False))
@@ -320,6 +330,34 @@ class Settings:
                 base[key] = value
                 self._source_mapping[new_path] = path
 
+    def _extract_mermaid_data(self, content: str) -> dict[str, Any]:
+        """
+        Extract and parse Mermaid state diagrams from markdown content.
+
+        Args:
+            content: Markdown text content.
+
+        Returns:
+            Dictionary with parsed MermaidDiagram objects.
+        """
+        mermaid_data = {}
+        # Find blocks like ```mermaid ... ```
+        pattern = re.compile(r"```mermaid\s+(.*?)\s+```", re.DOTALL)
+        matches = pattern.findall(content)
+
+        parser = MermaidParser()
+        for i, block in enumerate(matches):
+            if "stateDiagram" in block:
+                try:
+                    diagram = parser.parse(block)
+                    # If multiple diagrams, use index, otherwise use 'diagram'
+                    key = f"diagram_{i}" if len(matches) > 1 else "diagram"
+                    mermaid_data[key] = diagram
+                except Exception as e:
+                    logger.warning(f"Failed to parse Mermaid diagram: {e}")
+
+        return {"mermaid": mermaid_data} if mermaid_data else {}
+
     def load(self):
         """
         Load all configuration files from the settings directory.
@@ -345,6 +383,10 @@ class Settings:
                     post = frontmatter.load(file_path)
                     file_data = post.metadata
                     self._md_bodies[file_path] = post.content
+                    # Extract mermaid diagrams and merge them
+                    mermaid_data = self._extract_mermaid_data(post.content)
+                    if mermaid_data:
+                        self._deep_merge(file_data, mermaid_data, file_path)
                 elif suffix == ".toml":
                     with file_path.open("rb") as f:
                         file_data = tomllib.load(f)
@@ -359,7 +401,7 @@ class Settings:
                 logger.error(msg)
                 raise SettingsValidationError(msg) from e
 
-        v = Validator(self._schema)
+        v = SettingsValidator(self._schema)
         if not v.validate(merged_data):
             logger.error(self._t("validation_errors"))
             logger.error(yaml.dump(v.errors, default_flow_style=False))

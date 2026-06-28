@@ -1,6 +1,6 @@
 [project]
 name = "settings-manager"
-version = "0.1.0"
+version = "0.2.0"
 description = "A robust and flexible Python module for managing application settings from YAML, TOML and Markdown files."
 readme = "README.md"
 license = {file = "LICENSE"}
